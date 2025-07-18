@@ -919,7 +919,7 @@ def write_w5_info_file(output_path, protein_1_name: str, chain_1, protein_2_name
             else:
                 fw.write("FIXED DOMAIN\n")
             color_index = _get_domain_color_index(reference_id, global_reference_id)
-            fw.write(f"DOMAIN NUMBER: \t {reference_id + 1} (coloured {domain_colours[color_index]} for rasmol)\n")
+            fw.write(f"DOMAIN NUMBER: \t {reference_id + 1} (coloured {domain_colours[color_index]} for PyMol)\n")
             
             # Write domain residue ranges
             residue_str = _format_domain_residues(reference_domain, protein_1)
@@ -934,7 +934,7 @@ def write_w5_info_file(output_path, protein_1_name: str, chain_1, protein_2_name
                 color_index = _get_domain_color_index(moving_id, global_reference_id)
                 
                 fw.write(f"MOVING DOMAIN (RELATIVE TO Domain {reference_id + 1})\n")
-                fw.write(f"DOMAIN NUMBER: \t {moving_id + 1} (coloured {domain_colours[color_index]} for rasmol)\n")
+                fw.write(f"DOMAIN NUMBER: \t {moving_id + 1} (coloured {domain_colours[color_index]} for PyMol)\n")
                 
                 # Write domain residue ranges
                 residue_str = _format_domain_residues(moving_domain, protein_1)
