@@ -1,0 +1,19 @@
+# Number of times the k-means algorithm is run with different centroid seeds.
+# The final results is the best output of n_init consecutive runs in terms of inertia.
+k_means_n_init=1
+#
+# Maximum number of iterations of the k-means algorithm for a single run.
+k_means_max_iter=500
+#
+# WINDOW LENGTH IN NUMBER OF RESIDUES (DEFAULT 5 RESIDUES)
+window=5
+#
+# MINIMUM DOMAIN SIZE IN NUMBER OF RESIDUES (DEFAULT 20 RESIDUES)
+domain=20
+#
+# MINIMUM RATIO OF EXTERNAL TO INTERNAL DISPLACEMENT (DEFAULT 1.0)
+ratio=1.0
+#
+# FLAG TO DETERMINE WHETHER TO USE N, CA, AND C (backbone) OR JUST CA ONLY (ca)
+atoms=backbone
+#

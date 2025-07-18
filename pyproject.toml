@@ -1,0 +1,17 @@
+[project]
+name = "DynDom_Python"
+version = "1.0.0"
+description = "A Python implementation of the DynDom algorithm for analyzing protein domain movements"
+authors = [{name = "Steven Hayward"}]
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "numpy >= 1.19.0",
+    "scipy >= 1.6.0", 
+    "scikit-learn >= 0.24.0",
+    "gemmi >= 0.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/steven-hayward/DynDom_Python"

@@ -1,0 +1,33 @@
+DynDom Clustering Log - 4ake_A_2eck_B
+Started: 2025-07-18 15:19:50
+============================================================
+
+Window 5, K=2 - 15:19:50
+  Clusters: 2 (sizes: [165, 45])
+  Min cluster size: 45
+  PASS: All checks passed
+  Domains: 2 (sizes: [165, 45])
+  Reason: Hierarchical analysis successful (domains: 2)
+
+Window 5, K=3 - 15:19:50
+  Clusters: 3 (sizes: [43, 34, 133])
+  Min cluster size: 34
+  PASS: All checks passed
+  Domains: 3 (sizes: [43, 34, 133])
+  Reason: Hierarchical analysis successful (domains: 3)
+
+Window 5, K=4 - 15:19:50
+  Clusters: 4 (sizes: [43, 132, 9, 26])
+  Min cluster size: 9
+  FAIL: Cluster too small (< 20 residues)
+  Reason: Cluster too small but previous valid solution exists (k=3)
+
+============================================================
+FINAL RESULT
+Time: 2025-07-18 15:19:50
+Final K: 3
+Final window: 5
+Status: 0
+Number of domains: 3
+Domain sizes: [43, 34, 133]
+============================================================

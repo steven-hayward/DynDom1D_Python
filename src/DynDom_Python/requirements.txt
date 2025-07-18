@@ -1,0 +1,14 @@
+# Core scientific computing
+numpy>=1.19.0
+scipy>=1.6.0
+
+# Machine learning
+scikit-learn>=0.24.0
+
+# Crystallography and molecular structure
+gemmi>=0.5.0
+
+# Optional: For better performance and compatibility
+# Note: These may be automatically installed with the above packages
+# matplotlib>=3.3.0  # If visualization is needed
+# pandas>=1.1.0      # If data manipulation is needed
