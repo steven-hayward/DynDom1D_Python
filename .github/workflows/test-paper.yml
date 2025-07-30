@@ -60,8 +60,8 @@ jobs:
           echo "YAML front matter delimiter found"
         else
           echo "YAML front matter may be malformed"
-          echo "First 20 lines of paper.md:"
-          head -20 paper.md
+          echo "First 35 lines of paper.md:"
+          head -35 paper.md
           exit 1
         fi
         
