@@ -13,9 +13,7 @@ on:
     paths:
       - 'paper.md'
       - 'paper.bib'
-      - '**.png'
-      - '**.jpg'
-      - '**.jpeg'
+      - 'adenylate_kinase.png'
       - '.github/workflows/test-paper.yml'
   workflow_dispatch: # Allows manual triggering
 
