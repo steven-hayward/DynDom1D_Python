@@ -13,7 +13,7 @@ authors:
     orcid: 0009-0004-8963-1737
     affiliation: 1
   - name: Steven Hayward
-    orchid: 0000-0001-6959-2604
+    orcid: 0000-0001-6959-2604
     corresponding: true
     affiliation: 1
 affiliations:
