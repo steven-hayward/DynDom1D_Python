@@ -21,8 +21,6 @@ affiliations:
    index: 1
 date: 1 August 2025
 bibliography: paper.bib
-
-
 ---
 
 # Summary
