@@ -56,7 +56,7 @@ jobs:
     - name: Validate paper.md YAML front matter
       run: |
         echo "Checking YAML front matter in paper.md..."
-        if head -20 paper.md | grep -q "^---$"; then
+        if grep -q "^---$" paper.md && [ $(grep -c "^---$" paper.md) -eq 2 ]; then
           echo "YAML front matter delimiter found"
         else
           echo "YAML front matter may be malformed"
