@@ -1,0 +1,202 @@
+name: Test JOSS Paper Compilation
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'paper.md'
+      - 'paper.bib'
+      - '**.png'
+      - '**.jpg'
+      - '**.jpeg'
+      - '.github/workflows/test-paper.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'paper.md'
+      - 'paper.bib'
+      - '**.png'
+      - '**.jpg'
+      - '**.jpeg'
+      - '.github/workflows/test-paper.yml'
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  test-paper:
+    runs-on: ubuntu-latest
+    name: Test JOSS Paper PDF Generation
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Check if paper files exist
+      run: |
+        echo "Checking for required paper files..."
+        if [ ! -f paper.md ]; then
+          echo "paper.md not found!"
+          exit 1
+        else
+          echo "paper.md found"
+        fi
+        
+        if [ ! -f paper.bib ]; then
+          echo "paper.bib not found!"
+          exit 1
+        else
+          echo "paper.bib found"
+        fi
+        
+        echo "Paper files present"
+        
+    - name: List paper directory contents
+      run: |
+        echo "Repository contents:"
+        ls -la
+        echo ""
+        echo "Looking for image files:"
+        find . -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" | head -10
+        
+    - name: Validate paper.md YAML front matter
+      run: |
+        echo "Checking YAML front matter in paper.md..."
+        if head -20 paper.md | grep -q "^---$"; then
+          echo "YAML front matter delimiter found"
+        else
+          echo "YAML front matter may be malformed"
+          echo "First 20 lines of paper.md:"
+          head -20 paper.md
+          exit 1
+        fi
+        
+    - name: Validate BibTeX file
+      run: |
+        echo "Checking paper.bib format..."
+        if grep -q "@" paper.bib; then
+          echo "BibTeX entries found in paper.bib"
+          echo "Number of BibTeX entries:"
+          grep -c "^@" paper.bib
+        else
+          echo "No BibTeX entries found in paper.bib"
+          exit 1
+        fi
+        
+    - name: Pull JOSS Docker image
+      run: |
+        echo "Pulling JOSS compilation Docker image..."
+        docker pull openjournals/inara:latest
+        
+    - name: Compile paper to PDF
+      run: |
+        echo "Compiling paper.md to PDF using JOSS environment..."
+        docker run --rm \
+          --volume ${{ github.workspace }}:/data \
+          --user $(id -u):$(id -g) \
+          --env JOURNAL=joss \
+          openjournals/inara:latest \
+          -o pdf,crossref paper.md
+          
+    - name: Check if PDF was generated
+      run: |
+        if [ -f paper.pdf ]; then
+          echo "paper.pdf generated successfully!"
+          echo "PDF file size: $(du -h paper.pdf | cut -f1)"
+        else
+          echo "paper.pdf was not generated"
+          echo "Contents of working directory:"
+          ls -la
+          exit 1
+        fi
+        
+    - name: Upload generated PDF as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: joss-paper-pdf
+        path: paper.pdf
+        retention-days: 30
+        
+    - name: Upload compilation logs (if any)
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: compilation-logs
+        path: |
+          *.log
+          *.aux
+          *.out
+        retention-days: 7
+        if-no-files-found: ignore
+        
+    - name: Comment on PR with PDF link (if PR)
+      uses: actions/github-script@v7
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 'JOSS paper compiled successfully! The generated PDF is available in the [workflow artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).'
+          })
+          
+  validate-paper-content:
+    runs-on: ubuntu-latest
+    name: Validate Paper Content
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Check paper structure
+      run: |
+        echo "Validating paper structure..."
+        
+        # Check for required sections
+        sections=("Summary" "Statement of need")
+        for section in "${sections[@]}"; do
+          if grep -q "^# $section" paper.md; then
+            echo "Found required section: $section"
+          else
+            echo "Missing required section: $section"
+            exit 1
+          fi
+        done
+        
+        # Check for YAML fields
+        yaml_fields=("title" "authors" "affiliations")
+        for field in "${yaml_fields[@]}"; do
+          if grep -q "^$field:" paper.md; then
+            echo "Found YAML field: $field"
+          else
+            echo "Missing YAML field: $field"
+            exit 1
+          fi
+        done
+
+        echo "Paper structure validation passed"
+        
+    - name: Check citations format
+      run: |
+        echo "Checking citation format..."
+        
+        # Look for citations in [@key] format
+        if grep -q "\[@[^]]*\]" paper.md; then
+          echo "Found citations in correct format"
+          echo "Citations found:"
+          grep -o "\[@[^]]*\]" paper.md | head -5
+        else
+          echo "No citations found in [@key] format"
+        fi
+        
+        # Check if cited keys exist in bibliography
+        citations=$(grep -o "\[@[^]]*\]" paper.md | sed 's/\[@//g' | sed 's/\]//g' | sed 's/;.*//g' | sort | uniq)
+        if [ ! -z "$citations" ]; then
+          echo "Checking if citations exist in paper.bib..."
+          for citation in $citations; do
+            if grep -q "^@.*{$citation," paper.bib; then
+              echo "Citation key '$citation' found in bibliography"
+            else
+              echo "Citation key '$citation' not found in bibliography"
+            fi
+          done
+        fi
