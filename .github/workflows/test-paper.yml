@@ -56,14 +56,48 @@ jobs:
     - name: Validate paper.md YAML front matter
       run: |
         echo "Checking YAML front matter in paper.md..."
-        if grep -q "^---$" paper.md && [ $(grep -c "^---$" paper.md) -eq 2 ]; then
-          echo "YAML front matter delimiter found"
+        echo "Looking for --- delimiters..."
+        grep -n "^---$" paper.md
+        echo "Number of --- delimiters found:"
+        grep -c "^---$" paper.md
+        
+        delimiter_count=$(grep -c "^---$" paper.md)
+        echo "Delimiter count: $delimiter_count"
+        
+        if [ "$delimiter_count" -eq 2 ]; then
+          echo "Found exactly 2 YAML delimiters"
+          echo "YAML front matter structure looks correct"
         else
-          echo "YAML front matter may be malformed"
-          echo "First 35 lines of paper.md:"
-          head -35 paper.md
+          echo "Expected 2 delimiters, found: $delimiter_count"
+          echo "First 40 lines of paper.md:"
+          head -40 paper.md
           exit 1
         fi
+        
+        # Test YAML parsing with python
+        echo "Testing YAML parsing..."
+        python3 -c "
+        import yaml
+        import sys
+        
+        with open('paper.md', 'r') as f:
+            content = f.read()
+        
+        # Extract YAML front matter
+        parts = content.split('---', 2)
+        if len(parts) >= 3:
+            yaml_content = parts[1]
+            try:
+                data = yaml.safe_load(yaml_content)
+                print('YAML parsing successful')
+                print('Title:', data.get('title', 'Not found'))
+            except Exception as e:
+                print('YAML parsing failed:', e)
+                sys.exit(1)
+        else:
+            print('Could not extract YAML front matter')
+            sys.exit(1)
+        "
         
     - name: Validate BibTeX file
       run: |
