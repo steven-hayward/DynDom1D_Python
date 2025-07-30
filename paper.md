@@ -9,7 +9,7 @@ tags:
 authors:
   - name: Jien Lim
     affiliation: 1
-  - name: Hugh Milliard
+  - name: Hugh Millard
     orcid: 0009-0004-8963-1737
     affiliation: 1
   - name: Steven Hayward
@@ -18,8 +18,7 @@ authors:
     affiliation: 1
 affiliations:
  - name: School of Computing Sciences, University of East Anglia, Norwich NR4 7TJ, U.K.
-   index: 1
-   
+   index: 1  
 date: 1 August 2025
 bibliography: paper.bib
 ---
