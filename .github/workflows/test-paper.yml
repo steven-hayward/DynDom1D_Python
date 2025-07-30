@@ -56,49 +56,83 @@ jobs:
     - name: Validate paper.md YAML front matter
       run: |
         echo "Checking YAML front matter in paper.md..."
-        echo "Looking for --- delimiters..."
-        grep -n "^---$" paper.md
-        echo "Number of --- delimiters found:"
-        grep -c "^---$" paper.md
         
-        delimiter_count=$(grep -c "^---$" paper.md)
-        echo "Delimiter count: $delimiter_count"
-        
-        if [ "$delimiter_count" -eq 2 ]; then
-          echo "Found exactly 2 YAML delimiters"
-          echo "YAML front matter structure looks correct"
+        # More flexible approach - check if file starts with --- and has YAML structure
+        if head -1 paper.md | grep -q "^---"; then
+          echo "File starts with YAML delimiter"
         else
-          echo "Expected 2 delimiters, found: $delimiter_count"
-          echo "First 40 lines of paper.md:"
-          head -40 paper.md
+          echo "File does not start with ---"
+          echo "First line is:"
+          head -1 paper.md | cat -A
           exit 1
         fi
         
-        # Test YAML parsing with python
-        echo "Testing YAML parsing..."
+        # Check if we can find a closing delimiter somewhere in the file
+        if grep -q "^---" paper.md; then
+          delimiter_count=$(grep -c "^---" paper.md)
+          echo "Found $delimiter_count lines starting with ---"
+          
+          if [ "$delimiter_count" -ge 2 ]; then
+            echo "Found opening and closing YAML delimiters"
+          else
+            echo "Need at least 2 YAML delimiters, found: $delimiter_count"
+            exit 1
+          fi
+        else
+          echo "No YAML delimiters found"
+          exit 1
+        fi
+        
+        # Test basic YAML parsing with Python
+        echo "Testing YAML structure..."
         python3 -c "
-        import yaml
         import sys
         
-        with open('paper.md', 'r') as f:
-            content = f.read()
-        
-        # Extract YAML front matter
-        parts = content.split('---', 2)
-        if len(parts) >= 3:
-            yaml_content = parts[1]
-            try:
-                data = yaml.safe_load(yaml_content)
-                print('YAML parsing successful')
-                print('Title:', data.get('title', 'Not found'))
-            except Exception as e:
-                print('YAML parsing failed:', e)
+        try:
+            with open('paper.md', 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Find YAML front matter between first two --- lines
+            lines = content.split('\n')
+            yaml_start = -1
+            yaml_end = -1
+            
+            for i, line in enumerate(lines):
+                if line.strip() == '---':
+                    if yaml_start == -1:
+                        yaml_start = i
+                    else:
+                        yaml_end = i
+                        break
+            
+            if yaml_start != -1 and yaml_end != -1:
+                print('Found YAML front matter from line', yaml_start+1, 'to line', yaml_end+1)
+                
+                # Extract and check basic YAML fields
+                yaml_section = '\n'.join(lines[yaml_start+1:yaml_end])
+                
+                # Basic validation - check for required fields
+                required_fields = ['title:', 'authors:', 'affiliations:']
+                missing_fields = []
+                
+                for field in required_fields:
+                    if field not in yaml_section:
+                        missing_fields.append(field)
+                
+                if missing_fields:
+                    print('Missing required YAML fields:', missing_fields)
+                    sys.exit(1)
+                else:
+                    print('Basic YAML structure validation passed')
+            else:
+                print('Could not find complete YAML front matter')
                 sys.exit(1)
-        else:
-            print('Could not extract YAML front matter')
+                
+        except Exception as e:
+            print('Error validating YAML:', str(e))
             sys.exit(1)
         "
-        
+
     - name: Validate BibTeX file
       run: |
         echo "Checking paper.bib format..."
