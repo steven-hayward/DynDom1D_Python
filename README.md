@@ -9,13 +9,13 @@ DynDom1D_Python is a Python implementation of the DynDom algorithm for analyzing
 Given two conformational states of the same protein (e.g., from X-ray crystallography, NMR, or molecular dynamics simulations), DynDom1D_Python identifies how the protein moves by treating different regions as quasi-rigid bodies. This approach transforms complex conformational changes into an easily understood view of domain movements connected by flexible hinges.
 
 The analysis reveals:
-- **Dynamic domains**: Regions that move as rigid bodies
+- **Dynamic domains**: Regions that move as quasi-rigid bodies
 - **Hinge regions**: Flexible areas that allow domain movement  
 - **Screw axes**: Mathematical description of how domains rotate and translate relative to each other
 
 ## Features
 
-- **Automated Domain Detection**: Identifies rigid domains using rotation vector clustering
+- **Automated Domain Detection**: Identifies quasi-rigid domains using rotation vector clustering
 - **Hierarchical Analysis**: Uses advanced hierarchical domain reference system for complex multi-domain proteins
 - **Hinge Analysis**: Locates flexible regions and mechanical hinges between domains
 - **Screw Axis Calculation**: Determines interdomain rotation axes, angles, and translations
