@@ -19,13 +19,14 @@ authors:
 affiliations:
  - name: School of Computing Sciences, University of East Anglia, Norwich NR4 7TJ, U.K.
    index: 1
+   
 date: 1 August 2025
 bibliography: paper.bib
 ---
 
 # Summary
 
-DynDom1D_Python is an open-source Python implementation based on the original DynDom Fortran program for the analysis of domain movements in proteins. DynDom1D works on single protein chains and can be used when two structures of the same protein are available representing a conformational change. If appropriate it describes the conformational change in terms of the relative rotations of quasi-rigid regions called "dynamic domains" by way of hinge axes and hinge-bending residues. It improves over the original standalone version in a number of ways with an input file that requires only the protein data bank (PDB) accession codes and the chain identifiers of the two structures. The output has also been updated to produce a PyMol [@pymol] script file for display and animation of the domain movement.
+DynDom1D_Python is an open-source Python implementation based on the original DynDom Fortran program for the analysis of domain movements in proteins. DynDom1D works on single protein chains and can be used when two structures of the same protein are available representing a conformational change. If appropriate it describes the conformational change in terms of the relative rotations of quasi-rigid regions called "dynamic domains" by way of hinge axes and hinge-bending residues. It improves over the original standalone version in a number of ways with an input file that requires only the protein data bank (PDB) accession codes and the chain identifiers of the two structures. The output has also been updated to produce a PyMol script file for display and animation of the domain movement.
 
 # Statement of need
 
@@ -48,7 +49,7 @@ The basic idea behind the DynDom approach and related approaches [@Wriggers:1997
 9. If the ratio test is passed for all, determine screw axes.
 10. Determine interdomain bending regions.
 11. Assign mechanical hinges and percentage "closure".
-12. Output results including PDB files for display with PyMol using a Pymol script file (.pml file).
+12. Output results including PDB files for display with PyMol [@pymol] using a Pymol script file (.pml file).
 
 Further details on the basic methodology can be found in the original DynDom publications[@Hayward:1998;@Lee:2002]. This new open source release include improvements made in the development of DynDom3D and DynDom6D. Basic functions such as parsing PDB files and superposition are performed using GEMMI [@Wojdyr:2022] and clustering of rotation vectors uses scikit-learn's [@pedregosa2011scikit:2011] kmeans clustering method. DynDom1D is the only tool that is able to assign interdomain bending regions. An important feature is its ability to assign "mechanical hinges". These are defined as interdomain bending regions (more commonly, but more loosely referred to as "hinge-bending" regions) that are close to (within 5.5 A) the interdomain screw axis [@Hayward:1999] (more commonly, but more loosely referred to as the "hinge-axis"). In order to properly control a domain movement, two or more mechanical hinges are separated in space determining the direction and location of the screw axis. Often such arrangements create a "closure" motion whereby the interdomain cleft narrows or widens depending of the direction of rotation. DynDom1D_Python assigns mechanical hinges, and the percentage closure motion (0% closure means a pure (100%) twisting motion) and also gives a point on the screw axis and its direction in terms of a unit vector.  
 
