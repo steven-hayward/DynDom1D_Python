@@ -6,9 +6,7 @@ on:
     paths:
       - 'paper.md'
       - 'paper.bib'
-      - '**.png'
-      - '**.jpg'
-      - '**.jpeg'
+      - 'adenylate_kinase.png'
       - '.github/workflows/test-paper.yml'
   pull_request:
     branches: [ main, master ]
