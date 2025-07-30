@@ -1,0 +1,44 @@
+DynDom Python Version 1.0
+4akeA_2eckB.w5
+file name of conformer 1: 4ake.pdb
+chain id: A
+file name of conformer 2: 2eck.pdb
+chain id: B
+window length: 5
+minimum ratio of external to internal motion: 1.0
+minimum domain size: 20
+atoms to use: ['N', 'CA', 'C']
+THERE ARE 3 DOMAINS
+================================================================================
+FIXED DOMAIN - Fixed for pymol visualisation
+DOMAIN NUMBER: 	 3 (coloured blue for rasmol)
+RESIDUE NUMBERS: 	3 - 29, 64 - 116, 160 - 212
+SIZE: 	133 RESIDUES
+BACKBONE RMSD ON THIS DOMAIN: 	1.674A
+------------------------------------------------------------------------------
+MOVING DOMAIN (RELATIVE TO Domain 3)
+DOMAIN NUMBER: 	 1 (coloured red for rasmol)
+RESIDUE NUMBERS: 	117 - 159
+SIZE: 	43 RESIDUES
+BACKBONE RMSD ON THIS DOMAIN: 	0.563A
+RATIO OF INTERDOMAIN TO INTRADOMAIN DISPLACEMENT: 	5.193
+ANGLE OF ROTATION: 	53.013 DEGREES
+TRANSLATION ALONG AXIS:	1.176 A
+SCREW AXIS DIRECTION (UNIT VECTOR): 	0.309 	0.307 	0.9
+POINT ON AXIS: 	2.07 	-1.533 	-25.571
+BENDING RESIDUES: 	114 - 117
+BENDING RESIDUES: 	155 - 170
+------------------------------------------------------------------------------
+MOVING DOMAIN (RELATIVE TO Domain 3)
+DOMAIN NUMBER: 	 2 (coloured yellow for rasmol)
+RESIDUE NUMBERS: 	30 - 63
+SIZE: 	34 RESIDUES
+BACKBONE RMSD ON THIS DOMAIN: 	1.658A
+RATIO OF INTERDOMAIN TO INTRADOMAIN DISPLACEMENT: 	2.566
+ANGLE OF ROTATION: 	46.123 DEGREES
+TRANSLATION ALONG AXIS:	1.406 A
+SCREW AXIS DIRECTION (UNIT VECTOR): 	-0.91 	0.182 	-0.372
+POINT ON AXIS: 	-6.88 	-11.308 	-4.525
+BENDING RESIDUES: 	28 - 30
+BENDING RESIDUES: 	61 - 64
+------------------------------------------------------------------------------

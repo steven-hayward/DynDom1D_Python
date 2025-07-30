@@ -494,7 +494,7 @@ def write_complete_pymol_script(output_path, protein_1, protein_2_name, protein_
             fw.write("# Domain-colored structure with hierarchical screw axis arrows\n")
             fw.write("reinitialize\n")
             fw.write(f"load {folder_name}.pdb\n")
-            fw.write("bg_color white\n")
+            fw.write("bg_color grey\n")
             fw.write("color grey\n")
             fw.write("\n")
             

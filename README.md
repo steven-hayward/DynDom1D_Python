@@ -1,12 +1,12 @@
-# DynDom-Py
+# DynDom1D_Python
 
 A Python implementation of the DynDom algorithm for analyzing protein domain movements between conformational states.
 
 ## Overview
 
-DynDom-Py is a Python implementation of the DynDom algorithm for analyzing protein conformational changes in terms of rigid-body domain movements. The software determines protein domains, hinge axes, and amino acid residues involved in hinge bending through fully automated analysis.
+DynDom1D_Python is a Python implementation of the DynDom algorithm for analyzing protein conformational changes in terms of rigid-body domain movements. The software determines protein domains, hinge axes, and amino acid residues involved in hinge bending through fully automated analysis.
 
-Given two conformational states of the same protein (e.g., from X-ray crystallography, NMR, or molecular dynamics simulations), DynDom-Py identifies how the protein moves by treating different regions as quasi-rigid bodies. This approach transforms complex conformational changes into an easily understood view of domain movements connected by flexible hinges.
+Given two conformational states of the same protein (e.g., from X-ray crystallography, NMR, or molecular dynamics simulations), DynDom1D_Python identifies how the protein moves by treating different regions as quasi-rigid bodies. This approach transforms complex conformational changes into an easily understood view of domain movements connected by flexible hinges.
 
 The analysis reveals:
 - **Dynamic domains**: Regions that move as rigid bodies
@@ -37,8 +37,8 @@ The analysis reveals:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/dyndom-py.git
-   cd dyndom-py
+   git clone https://github.com/yourusername/DynDom1D_Python.git
+   cd DynDom1D_Python
    ```
 
 2. **Create a virtual environment** (recommended):
@@ -162,7 +162,7 @@ The software generates several output files in the specified output directory:
 
 ## Algorithm Overview
 
-DynDom-Py implements a 7-step automated workflow with hierarchical domain analysis:
+DynDom1D_Python implements a 7-step automated workflow with hierarchical domain analysis:
 
 1. **Global Structure Alignment**: Performs whole-protein best-fit superposition
 2. **Local Motion Detection**: Analyzes rotation vectors using sliding windows
