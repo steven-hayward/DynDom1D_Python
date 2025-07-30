@@ -5,6 +5,7 @@ import os
 from itertools import groupby
 from operator import itemgetter
 from pathlib import Path
+import math
 
 input_command_file_path = "data"
 DOMAIN_COLORS = ["blue", "red", "yellow", "pink", "cyan", "purple", "orange", "brown", "black", "white", "magenta", "violet", "indigo", "turquoise", "coral"]
@@ -877,6 +878,310 @@ def _generate_arrow_commands(domains, fixed_domain_id, arrow_pdb_name, output_pa
     ])
     
     return commands
+
+def calculate_closure_motion(moving_domain, reference_domain, screw_axis, point_on_axis, protein_1):
+    """
+    Determines angle between screw axis and line joining domain centers of mass
+    """
+    # Get slide window residues
+    slide_residues = protein_1.get_slide_window_residues()
+    
+    # Calculate center of mass for reference domain (using CA atoms)
+    ref_coords = []
+    for segment in reference_domain.segments:
+        for i in range(segment[0], segment[1] + 1):
+            if 'CA' in slide_residues[i]:
+                ca_pos = slide_residues[i]['CA'][0].pos
+                ref_coords.append([ca_pos.x, ca_pos.y, ca_pos.z])
+    
+    ref_com = np.mean(ref_coords, axis=0)
+    
+    # Calculate center of mass for moving domain (using CA atoms)
+    mov_coords = []
+    for segment in moving_domain.segments:
+        for i in range(segment[0], segment[1] + 1):
+            if 'CA' in slide_residues[i]:
+                ca_pos = slide_residues[i]['CA'][0].pos
+                mov_coords.append([ca_pos.x, ca_pos.y, ca_pos.z])
+    
+    mov_com = np.mean(mov_coords, axis=0)
+    
+    # Unit vector between centers of mass
+    cm_vector = mov_com - ref_com
+    cm_distance = np.linalg.norm(cm_vector)
+    
+    if cm_distance < 1e-6:  # Avoid division by zero
+        return 0.0, 0.0, 0.0
+    
+    unit_cm_vector = cm_vector / cm_distance
+    
+    # Normalize screw axis
+    unit_screw_axis = screw_axis / np.linalg.norm(screw_axis)
+    
+    # Calculate angle between screw axis and center-of-mass line
+    dot_product = np.dot(unit_screw_axis, unit_cm_vector)
+    # Clamp to valid range for acos
+    dot_product = max(-1.0, min(1.0, dot_product))
+    
+    axis_angle = math.acos(abs(dot_product))  # Use abs to get acute angle
+    axis_angle_degrees = math.degrees(axis_angle)
+    
+    if axis_angle_degrees > 90.0:
+        axis_angle_degrees = 180.0 - axis_angle_degrees
+    
+    # Calculate distance between axis and center-of-mass line
+    axis_distance = calculate_line_to_line_distance(
+        point_on_axis, unit_screw_axis, ref_com, unit_cm_vector
+    )
+    
+    # Calculate percentage closure motion
+    # This is the component of rotation perpendicular to the center-of-mass line
+    closure_component = unit_screw_axis - dot_product * unit_cm_vector
+    closure_percentage = np.sum(closure_component**2) * 100.0
+    
+    return axis_angle_degrees, axis_distance, closure_percentage
+
+def calculate_line_to_line_distance(point1, direction1, point2, direction2):
+    """
+    Calculate minimum distance between two lines in 3D space
+    """
+    # Vector between points on the two lines
+    w = point1 - point2
+    
+    # Cross product of direction vectors
+    cross_prod = np.cross(direction1, direction2)
+    cross_magnitude = np.linalg.norm(cross_prod)
+    
+    if cross_magnitude < 1e-6:  # Lines are parallel
+        # Distance from point to line
+        projection = np.dot(w, direction2)
+        closest_point_on_line2 = point2 + projection * direction2
+        return np.linalg.norm(point1 - closest_point_on_line2)
+    
+    # Lines are not parallel
+    distance = abs(np.dot(w, cross_prod)) / cross_magnitude
+    return distance
+
+def find_hinge_residues(moving_domain, reference_domain, screw_axis, point_on_axis, 
+                       protein_1, bending_residues, hinge_cutoff=5.5):
+    """
+    Find residues that act as mechanical hinges (close to screw axis)
+    Like Fortran axres.f
+    """
+    slide_residues = protein_1.get_slide_window_residues()
+    util_res = protein_1.utilised_residues_indices
+    polymer = protein_1.get_polymer()
+    slide_window_indices = protein_1.slide_window_residues_indices
+    
+    hinge_residues = []
+    
+    # Check bending residues to see which are close to the screw axis
+    domain_id = moving_domain.domain_id
+    if domain_id in bending_residues:
+        for bend_res_idx in bending_residues[domain_id]:
+            # Convert bending residue index to actual residue
+            util_pos = slide_window_indices[0] + bend_res_idx
+            if util_pos < len(util_res):
+                actual_res_idx = util_res[util_pos]
+                if actual_res_idx < len(polymer):
+                    residue = polymer[actual_res_idx]
+                    
+                    # Get CA atom position
+                    if 'CA' in residue:
+                        ca_pos = residue['CA'][0].pos
+                        ca_coords = np.array([ca_pos.x, ca_pos.y, ca_pos.z])
+                        
+                        # Calculate distance from CA to screw axis
+                        distance = point_to_line_distance(ca_coords, point_on_axis, screw_axis)
+                        
+                        if distance <= hinge_cutoff:
+                            hinge_residues.append({
+                                'residue_name': residue.name,
+                                'residue_number': residue.seqid.num,
+                                'distance': distance
+                            })
+    
+    return hinge_residues
+
+def point_to_line_distance(point, line_point, line_direction):
+    """
+    Calculate distance from a point to a line in 3D space
+    """
+    # Normalize line direction
+    line_dir_normalized = line_direction / np.linalg.norm(line_direction)
+    
+    # Vector from line point to the point
+    point_vector = point - line_point
+    
+    # Project point_vector onto line direction
+    projection_length = np.dot(point_vector, line_dir_normalized)
+    projection = projection_length * line_dir_normalized
+    
+    # Perpendicular distance is the magnitude of the rejection
+    perpendicular = point_vector - projection
+    distance = np.linalg.norm(perpendicular)
+    
+    return distance
+
+def format_hinge_output(hinge_residues):
+    """
+    Format hinge residues for output like Fortran version
+    """
+    output_lines = []
+    
+    if not hinge_residues:
+        output_lines.append("NO MECHANICAL HINGES FOUND")
+        output_lines.append("AXIS IS NOT AN EFFECTIVE HINGE AXIS")
+        return output_lines
+    
+    # Add individual hinge residues
+    for hinge in hinge_residues:
+        line = f"{hinge['residue_name']:>3s} {hinge['residue_number']:>4d} ACTS AS A MECHANICAL HINGE, ITS C-ALPHA IS {hinge['distance']:5.1f} A FROM AXIS"
+        output_lines.append(line)
+    
+    output_lines.append("")
+    output_lines.append("AXIS IS AN -- EFFECTIVE HINGE AXIS--")
+    
+    return output_lines
+
+# Modified w5_info writer to include closure and hinge analysis
+def write_w5_info_file_with_closure(output_path, protein_1_name: str, chain_1, protein_2_name: str, chain_2, 
+                                   window, domain_size, ratio, atoms, domains: list, analysis_pairs: list, 
+                                   global_reference_id: int, protein_1, pair_specific_results=None, 
+                                   bending_residues_indices=None):
+    """
+    Enhanced w5_info writer with closure motion and hinge analysis
+    """
+    try:
+        protein_folder = f"{protein_1_name}_{chain_1}_{protein_2_name}_{chain_2}"
+        fw = open(f"{output_path}/{protein_folder}/{protein_folder}.w5_info", "w")
+        
+        # Write header (same as before)
+        fw.write("DynDom Python Version 1.0\n")
+        fw.write(f"{protein_1_name}{chain_1}_{protein_2_name}{chain_2}.w5\n")
+        fw.write(f"file name of conformer 1: {protein_1_name}.pdb\n")
+        fw.write(f"chain id: {chain_1}\n")
+        fw.write(f"file name of conformer 2: {protein_2_name}.pdb\n")
+        fw.write(f"chain id: {chain_2}\n")
+        fw.write(f"window length: {window}\n")
+        fw.write(f"minimum ratio of external to internal motion: {ratio}\n")
+        fw.write(f"minimum domain size: {domain_size}\n")
+        fw.write(f"atoms to use: {atoms}\n")
+        fw.write(f"THERE ARE {len(domains)} DOMAINS\n")
+        fw.write("================================================================================\n")
+        
+        domain_colours = ["blue", "red", "yellow", "pink", "cyan", "purple", "orange", "brown", "black", "white"]
+        
+        # Group analysis pairs by reference domain
+        reference_groups = {}
+        for moving_id, reference_id in analysis_pairs:
+            if reference_id not in reference_groups:
+                reference_groups[reference_id] = []
+            reference_groups[reference_id].append(moving_id)
+        
+        # Write each reference domain followed by its moving domains
+        for reference_id in sorted(reference_groups.keys()):
+            reference_domain = domains[reference_id]
+            moving_domain_ids = reference_groups[reference_id]
+            
+            # Write fixed domain header
+            if reference_id == global_reference_id:
+                fw.write("FIXED DOMAIN - Fixed for pymol visualisation\n")
+            else:
+                fw.write("FIXED DOMAIN\n")
+                
+            color_index = reference_id % len(domain_colours)
+            fw.write(f"DOMAIN NUMBER: \t {reference_id + 1} (coloured {domain_colours[color_index]} for rasmol)\n")
+            
+            # Write domain residue ranges 
+            residue_str = _format_domain_residues(reference_domain, protein_1)
+            fw.write(f"RESIDUE NUMBERS: \t{residue_str}\n")
+            fw.write(f"SIZE: \t{reference_domain.num_residues}\n")
+            fw.write(f"BACKBONE RMSD ON THIS DOMAIN: \t{round(reference_domain.rmsd, 3)}A\n")
+            fw.write("------------------------------------------------------------------------------\n")
+            
+            # Write each moving domain for this reference
+            for moving_id in moving_domain_ids:
+                moving_domain = domains[moving_id]
+                color_index = (moving_id + 1) % len(domain_colours)
+                
+                fw.write(f"MOVING DOMAIN (RELATIVE TO Domain {reference_id + 1})\n")
+                fw.write(f"DOMAIN NUMBER: \t {moving_id + 1} (coloured {domain_colours[color_index]} for rasmol)\n")
+                
+                # Write domain residue ranges
+                residue_str = _format_domain_residues(moving_domain, protein_1)
+                fw.write(f"RESIDUE NUMBERS: \t{residue_str}\n")
+                fw.write(f"SIZE: \t{moving_domain.num_residues}\n")
+                
+                # Get motion parameters (same as before)
+                pair_key = (moving_id, reference_id)
+                if pair_specific_results and pair_key in pair_specific_results:
+                    pair_data = pair_specific_results[pair_key]
+                    rot_angle = pair_data['rot_angle']
+                    translation = pair_data['translation']
+                    screw_axis = pair_data['screw_axis']
+                    point_on_axis = pair_data['point_on_axis']
+                    rmsd = pair_data['rmsd']
+                    ratio_value = pair_data.get('ratio', moving_domain.ratio)
+                else:
+                    rot_angle = moving_domain.rot_angle
+                    translation = moving_domain.translation
+                    screw_axis = moving_domain.screw_axis
+                    point_on_axis = moving_domain.point_on_axis
+                    rmsd = moving_domain.rmsd
+                    ratio_value = moving_domain.ratio
+                
+                fw.write(f"BACKBONE RMSD ON THIS DOMAIN: \t{round(rmsd, 3)}A\n")
+                fw.write("\n")
+                
+                # Write motion parameters
+                fw.write(f"RATIO INTERDOMAIN TO INTRADOMAIN DISPLACEMENT: \t{round(ratio_value, 3)}\n")
+                fw.write(f"ANGLE OF ROTATION: \t{round(rot_angle, 3)} DEGREES\n")
+                fw.write(f"TRANSLATION ALONG AXIS:\t{round(translation, 3)} A\n")
+                
+                # NEW: Add closure motion analysis
+                axis_angle, axis_distance, closure_percent = calculate_closure_motion(
+                    moving_domain, reference_domain, screw_axis, point_on_axis, protein_1
+                )
+                
+                # NEW: Find hinge residues
+                hinge_residues = find_hinge_residues(
+                    moving_domain, reference_domain, screw_axis, point_on_axis, 
+                    protein_1, bending_residues_indices or {}
+                )
+                
+                # Write bending residues (existing code)
+                if hasattr(moving_domain, 'bend_res') and moving_domain.bend_res:
+                    groups = group_continuous_regions(moving_domain.bend_res)
+                    fw.write("BENDING RESIDUES (coloured green for rasmol):\n")
+                    fw.write("\n")
+                    for group in groups:
+                        start_pdb_num, end_pdb_num = _convert_bend_res_to_pdb_nums(group, protein_1)
+                        fw.write(f"BENDING RESIDUES: \t{start_pdb_num} - {end_pdb_num}\n")
+                    fw.write("\n")
+                
+                # NEW: Write hinge analysis
+                hinge_output = format_hinge_output(hinge_residues)
+                for line in hinge_output:
+                    fw.write(line + "\n")
+                fw.write("\n")
+                
+                # NEW: Write closure motion analysis
+                fw.write(f"ANGLE BETWEEN SCREW AXIS AND LINE JOINING CENTRES OF MASS: {axis_angle:6.1f}\n")
+                fw.write(f"DISTANCE BETWEEN SCREW AXIS AND LINE JOINING CENTRES OF MASS: {axis_distance:6.1f} A\n")
+                fw.write(f"PERCENTAGE CLOSURE MOTION: {closure_percent:6.1f}\n")
+                
+                fw.write("------------------------------------------------------------------------------\n")
+        
+        fw.close()
+        return True
+        
+    except Exception as e:
+        print(f"Error writing enhanced w5_info file: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    
 def write_w5_info_file(output_path, protein_1_name: str, chain_1, protein_2_name: str, chain_2, window, domain_size, ratio, atoms,
                        domains: list, analysis_pairs: list, global_reference_id: int, protein_1, pair_specific_results=None):
     """
