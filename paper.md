@@ -41,7 +41,7 @@ There are two main approaches to the task of determining dynamic domains and hin
 
 # Research Impact Statement
 
-The Fortran version of DynDom1D was released in 1998 and as part of CCP4 from 1999. The first DynDom article [@Hayward:1998] has been cited by more than 950 articles (Google Scholar) and a subsequent article that improved and extended some of the basic methodologies, more than 300 times. The number of citations represents a minimum, as being part of CCP4, DynDom has been used by X-ray crystallographers with citation to CCP4 only. The majority of citations are from research articles by structural biologists who have solved the structure of their target protein in a functional state that exhibits a difference in conformation to one already known. DynDom is used to characterise this difference in terms of domains moving via hinge-bending. Target systems are often those critically involved in health conditions, e.g. neurological conditions [@Gangwar2025] and cancer [@Sotomayor2012;HDAC62025].
+The Fortran version of DynDom1D was released in 1998 and as part of CCP4 from 1999. The first DynDom article [@Hayward:1998] has been cited by more than 950 articles (Google Scholar) and a subsequent article that improved and extended some of the basic methodologies, more than 300 times. The number of citations represents a minimum, as being part of CCP4, DynDom has been used by X-ray crystallographers with citation to CCP4 only. The majority of citations are from research articles by structural biologists who have solved the structure of their target protein in a functional state that exhibits a difference in conformation to one already known. DynDom is used to characterise this difference in terms of domains moving via hinge-bending. Target systems are often those critically involved in health conditions, e.g. neurological conditions [@Gangwar2025] and cancer [@Sotomayor2012;@HDAC62025].
 
 # Method
 
@@ -78,3 +78,4 @@ Further details on the basic methodology can be found in the original DynDom pub
 All methodologies were conceived and designed by the authors. Claude Sonnet 4.0 was used to assist in translating some legacy Fortran functions into Python. All AI generated code was reviewed, checked and edited by the authors. Testing of the output was performed by the authors. AI was not used in the preparation of this article.
 
 # References
+
