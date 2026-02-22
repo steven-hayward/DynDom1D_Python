@@ -37,8 +37,8 @@ The analysis reveals:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/DynDom1D_Python.git
-   cd DynDom1D_Python
+   git clone https://github.com/steven-hayward/DynDom1D_Python.git
+   cd DynDom1D_Python/src/DynDom1D_Python
    ```
 
 2. **Create a virtual environment** (recommended):
