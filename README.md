@@ -32,6 +32,7 @@ The analysis reveals:
 
 - Python 3.7 or higher
 - Required packages listed in `requirements.txt`
+- (Optional) PyMol (paid or open source). Some installation options are [here](https://pymolwiki.org/index.php/Linux_Install). `python -m pip install pymol-open-source` sometimes also works, or for conda/mamba users `mamba install -c conda-forge open-source-pymol` works more reliably. 
 
 ### Setup
 
