@@ -31,7 +31,7 @@ The analysis reveals:
 ### Requirements
 
 - Python 3.7 or higher
-- Required packages listed in `requirements.txt`
+- Required packages listed in `pyproject.toml` (numpy, scipy, scikit-learn, gemmi)
 
 ### Setup
 
@@ -49,7 +49,7 @@ The analysis reveals:
 
 3. **Install dependencies**:
    ```bash
-   pip install -r requirements.txt
+   pip install .
    ```
 
    Or install manually:

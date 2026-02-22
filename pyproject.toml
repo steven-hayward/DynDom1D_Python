@@ -7,10 +7,17 @@ license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
+    # Core scientific computing
     "numpy >= 1.19.0",
-    "scipy >= 1.6.0", 
+    "scipy >= 1.6.0",
+    # Machine learning
     "scikit-learn >= 0.24.0",
+    # Crystallography and molecular structure
     "gemmi >= 0.5.0",
+    # Optional: matplotlib and pandas may be useful for downstream analysis
+    # but are not required to run DynDom1D_Python.
+    # "matplotlib >= 3.3.0",  # If visualization is needed
+    # "pandas >= 1.1.0"      # If data manipulation is needed
 ]
 
 [project.urls]
