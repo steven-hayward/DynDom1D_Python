@@ -1,11 +1,14 @@
 name: Test Software
 
-# Run on every push and pull request to main/master, and allow manual triggering.
+# Run on every push and pull request to main/master, weekly to catch breakage
+# from upstream dependency updates, and allow manual triggering.
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  schedule:
+    - cron: "0 6 * * 1"  # Every Monday at 06:00 UTC
   workflow_dispatch:
 
 jobs:
