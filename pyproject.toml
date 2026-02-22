@@ -16,6 +16,8 @@ dependencies = [
     "gemmi >= 0.5.0",
     # Optional: matplotlib and pandas may be useful for downstream analysis
     # but are not required to run DynDom1D_Python.
+    # "matplotlib >= 3.3.0",  # If visualization is needed
+    # "pandas >= 1.1.0"      # If data manipulation is needed
 ]
 
 [project.urls]
