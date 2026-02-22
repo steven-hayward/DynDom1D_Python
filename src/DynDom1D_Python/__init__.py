@@ -1,5 +1,5 @@
 """ 
-DynDom-Py: A Python implementation of the DynDom algorithm for analyzing protein domain movements.
+DynDom1D_Python: A Python implementation of the DynDom algorithm for analyzing protein domain movements.
 
 This package provides tools for analyzing protein conformational changes in terms of 
 rigid-body domain movements between two conformational states.
