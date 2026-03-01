@@ -14,4 +14,4 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/steven-hayward/DynDom_Python"
+Homepage = "https://github.com/steven-hayward/DynDom1D_Python"
