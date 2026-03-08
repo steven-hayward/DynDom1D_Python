@@ -488,7 +488,7 @@ def write_complete_pymol_script(output_path, protein_1, protein_2_name, protein_
     pml_file = f"{dir_path_str}/{folder_name}.pml"
     
     try:
-        with open(pml_file, 'w') as fw:
+        with open(pml_file, 'w', encoding='utf-8') as fw:
             # === HEADER ===
             fw.write("# DynDom Hierarchical Visualization\n")
             fw.write("# Domain-colored structure with hierarchical screw axis arrows\n")
@@ -1055,7 +1055,7 @@ def write_w5_info_file_with_closure(output_path, protein_1_name: str, chain_1, p
     """
     try:
         protein_folder = f"{protein_1_name}_{chain_1}_{protein_2_name}_{chain_2}"
-        fw = open(f"{output_path}/{protein_folder}/{protein_folder}.w5_info", "w")
+        fw = open(f"{output_path}/{protein_folder}/{protein_folder}.info", "w", encoding='utf-8')
         
         # Write header (same as before)
         fw.write("DynDom Python Version 1.0\n")
