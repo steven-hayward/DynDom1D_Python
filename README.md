@@ -95,7 +95,7 @@ The analysis reveals:
 
 2. **Prepare PDB files**:
    - Place your PDB files in the `data/` directory, or
-   - Use PDB codes (e.g., `1hng`, `2hng`) and the software will automatically download them from RCSB
+   - Use PDB codes (e.g., `4ake`, `2eck`) and the software will automatically download them from RCSB
 
 3. **Run the analysis**:
    ```bash
