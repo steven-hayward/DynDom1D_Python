@@ -560,8 +560,9 @@ def _generate_structure_coloring_commands_hierarchical(protein_1, domains, globa
     for b in bending_residues.values():
         for i in b:
             bb = i  # Segments are already in sliding window indices
-            index = polymer[bb].seqid.num
+            index = polymer[bb+mid_point].seqid.num
             all_bend_res_indices.append(index)
+            # i is a sliding window index, not a polymer index
 
     # Color each domain with its hierarchical color
     for domain in domains:
@@ -1181,121 +1182,6 @@ def write_w5_info_file_with_closure(output_path, protein_1_name: str, chain_1, p
         import traceback
         traceback.print_exc()
         return False
-    
-def write_w5_info_file(output_path, protein_1_name: str, chain_1, protein_2_name: str, chain_2, window, domain_size, ratio, atoms,
-                       domains: list, analysis_pairs: list, global_reference_id: int, protein_1, pair_specific_results=None):
-    """
-    Write w5_info file with simplified hierarchical domain structure
-    Shows fixed domain followed by moving domains relative to it
-    """
-    try:
-        protein_folder = f"{protein_1_name}_{chain_1}_{protein_2_name}_{chain_2}"
-        fw = open(f"{output_path}/{protein_folder}/{protein_folder}.w5_info", "w")
-        fw.write("DynDom Python Version 1.0\n")
-        fw.write(f"{protein_1_name}{chain_1}_{protein_2_name}{chain_2}.w5\n")
-        fw.write(f"file name of conformer 1: {protein_1_name}.pdb\n")
-        fw.write(f"chain id: {chain_1}\n")
-        fw.write(f"file name of conformer 2: {protein_2_name}.pdb\n")
-        fw.write(f"chain id: {chain_2}\n")
-        fw.write(f"window length: {window}\n")
-        fw.write(f"minimum ratio of external to internal motion: {ratio}\n")
-        fw.write(f"minimum domain size: {domain_size}\n")
-        fw.write(f"atoms to use: {atoms}\n")
-        fw.write(f"THERE ARE {len(domains)} DOMAINS\n")
-        fw.write("================================================================================\n")
-        
-        domain_colours = ["blue", "red", "yellow", "pink", "cyan", "purple", "orange", "brown", "black", "white", "magenta", "violet", "indigo", "turquoise", "coral"]
-        
-        # Group analysis pairs by reference domain
-        reference_groups = {}
-        for moving_id, reference_id in analysis_pairs:
-            if reference_id not in reference_groups:
-                reference_groups[reference_id] = []
-            reference_groups[reference_id].append(moving_id)
-        
-        # Write each reference domain followed by its moving domains
-        for reference_id in sorted(reference_groups.keys()):
-            reference_domain = domains[reference_id]
-            moving_domain_ids = reference_groups[reference_id]
-            
-            # Write fixed domain header
-            if reference_id == global_reference_id:
-                fw.write("FIXED DOMAIN - Fixed for pymol visualisation\n")
-            else:
-                fw.write("FIXED DOMAIN\n")
-            color_index = _get_domain_color_index(reference_id, global_reference_id)
-            fw.write(f"DOMAIN NUMBER: \t {reference_id + 1} (coloured {domain_colours[color_index]} for PyMol)\n")
-            
-            # Write domain residue ranges
-            residue_str = _format_domain_residues(reference_domain, protein_1)
-            fw.write(f"RESIDUE NUMBERS: \t{residue_str}\n")
-            fw.write(f"SIZE: \t{reference_domain.num_residues} RESIDUES\n")
-            fw.write(f"BACKBONE RMSD ON THIS DOMAIN: \t{round(reference_domain.rmsd, 3)}A\n")
-            fw.write("------------------------------------------------------------------------------\n")
-            
-            # Write each moving domain for this reference
-            for moving_id in moving_domain_ids:
-                moving_domain = domains[moving_id]
-                color_index = _get_domain_color_index(moving_id, global_reference_id)
-                
-                fw.write(f"MOVING DOMAIN (RELATIVE TO Domain {reference_id + 1})\n")
-                fw.write(f"DOMAIN NUMBER: \t {moving_id + 1} (coloured {domain_colours[color_index]} for PyMol)\n")
-                
-                # Write domain residue ranges
-                residue_str = _format_domain_residues(moving_domain, protein_1)
-                fw.write(f"RESIDUE NUMBERS: \t{residue_str}\n")
-                fw.write(f"SIZE: \t{moving_domain.num_residues} RESIDUES\n")
-                
-                # Use pair-specific results if available
-                pair_key = (moving_id, reference_id)
-                if pair_specific_results and pair_key in pair_specific_results:
-                    pair_data = pair_specific_results[pair_key]
-                    rot_angle = pair_data['rot_angle']
-                    translation = pair_data['translation']
-                    screw_axis = pair_data['screw_axis']
-                    point_on_axis = pair_data['point_on_axis']
-                    rmsd = pair_data['rmsd']
-                    
-                    # Calculate ratio (if available in pair data, otherwise use domain object)
-                    if 'ratio' in pair_data:
-                        ratio_value = pair_data['ratio']
-                    else:
-                        ratio_value = moving_domain.ratio
-                else:
-                    # Fallback to domain object if pair-specific data not available
-                    rot_angle = moving_domain.rot_angle
-                    translation = moving_domain.translation
-                    screw_axis = moving_domain.screw_axis
-                    point_on_axis = moving_domain.point_on_axis
-                    rmsd = moving_domain.rmsd
-                    ratio_value = moving_domain.ratio
-                
-                fw.write(f"BACKBONE RMSD ON THIS DOMAIN: \t{round(rmsd, 3)}A\n")
-                
-                # Write motion parameters using pair-specific data
-                fw.write(f"RATIO OF INTERDOMAIN TO INTRADOMAIN DISPLACEMENT: \t{round(ratio_value, 3)}\n")
-                fw.write(f"ANGLE OF ROTATION: \t{round(rot_angle, 3)} DEGREES\n")
-                fw.write(f"TRANSLATION ALONG AXIS:\t{round(translation, 3)} A\n")
-                fw.write(f"SCREW AXIS DIRECTION (UNIT VECTOR): \t{round(screw_axis[0], 3)} \t{round(screw_axis[1], 3)} \t{round(screw_axis[2], 3)}\n")
-                fw.write(f"POINT ON AXIS: \t{round(point_on_axis[0], 3)} \t{round(point_on_axis[1], 3)} \t{round(point_on_axis[2], 3)}\n")
-                
-                # Write bending residues
-                if hasattr(moving_domain, 'bend_res') and moving_domain.bend_res:
-                    groups = group_continuous_regions(moving_domain.bend_res)
-                    for group in groups:
-                        start_pdb_num, end_pdb_num = _convert_bend_res_to_pdb_nums(group, protein_1)
-                        fw.write(f"BENDING RESIDUES: \t{start_pdb_num} - {end_pdb_num}\n")
-                
-                fw.write("------------------------------------------------------------------------------\n")
-        
-        fw.close()
-        
-    except Exception as e:
-        print(f"Error writing w5_info file: {e}")
-        traceback.print_exc()
-        return False
-    return True
-
 
 def _format_domain_residues(domain, protein_1):
     """Helper function to format domain residue numbers for output"""

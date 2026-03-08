@@ -156,7 +156,7 @@ class Engine:
             if res_names_1[i] == res_names_2[i]:
                 correct_hit += 1
         similarity = correct_hit / len(res_names_1)
-        if similarity < 0.0004:
+        if similarity < 0.04:
             raise ValueError("Sequence Identity less than 40%")
 
     def get_atoms_indices(self):

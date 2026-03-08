@@ -6,25 +6,25 @@ bg_color grey
 color grey
 
 # === HIERARCHICAL DOMAIN STRUCTURE COLORING ===
-select domain_0, resi 116-152
+select domain_0, resi 118-154
 color red, domain_0  # Domain 0 (MOVING)
 
-select domain_1, resi 29-58
+select domain_1, resi 31-60
 color yellow, domain_1  # Domain 1 (MOVING)
 
-select domain_2, resi 1-25
-select domain_2, domain_2 + resi 63-111
-select domain_2, domain_2 + resi 169-210
+select domain_2, resi 1-27
+select domain_2, domain_2 + resi 65-113
+select domain_2, domain_2 + resi 171-210
 color blue, domain_2  # Domain 2 (GLOBAL REFERENCE)
 
 # Color bending residues
-select bending_residues_1, resi 112-115
+select bending_residues_1, resi 114-117
 color green, bending_residues_1
-select bending_residues_2, resi 153-168
+select bending_residues_2, resi 155-170
 color green, bending_residues_2
-select bending_residues_3, resi 26-28
+select bending_residues_3, resi 28-30
 color green, bending_residues_3
-select bending_residues_4, resi 59-62
+select bending_residues_4, resi 61-64
 color green, bending_residues_4
 
 set dash_gap, 0
@@ -44,7 +44,7 @@ hide everything, 4ake_A_2eck_B_arrows
 
 # Arrow 1: Domain 0 (moving) relative to Domain 2 (reference)
 # Shaft color: blue (reference domain), Head color: red (moving domain)
-# Rotation: 53.0Â°
+# Rotation: 53.0°
 
 # Select shaft and head atoms by chain and residue
 select shaft_1, chain A and resn SHF and resi 100
@@ -66,7 +66,7 @@ bond head_1, head_1
 
 # Arrow 2: Domain 1 (moving) relative to Domain 2 (reference)
 # Shaft color: blue (reference domain), Head color: yellow (moving domain)
-# Rotation: 46.1Â°
+# Rotation: 46.1°
 
 # Select shaft and head atoms by chain and residue
 select shaft_2, chain B and resn SHF and resi 150
@@ -123,6 +123,6 @@ delete arrow_*
 print 'DynDom hierarchical visualization loaded!'
 print 'Global reference domain: 2 (blue)'
 print 'Analysis pair 1: Domain 0 (red) relative to Domain 2 (blue)'
-print '  Rotation: 53.0Â°'
+print '  Rotation: 53.0°'
 print 'Analysis pair 2: Domain 1 (yellow) relative to Domain 2 (blue)'
-print '  Rotation: 46.1Â°'
+print '  Rotation: 46.1°'
