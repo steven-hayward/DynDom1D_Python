@@ -1,0 +1,58 @@
+name: Test Software
+
+# Run on every push and pull request to main/master, weekly to catch breakage
+# from upstream dependency updates, and allow manual triggering.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: "0 6 * * 1"  # Every Monday at 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  run-example:
+    runs-on: ubuntu-latest
+    name: Run usage example and verify output
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        # requirements.txt lives inside the package directory, not at the repo root.
+        run: pip install -r src/DynDom1D_Python/requirements.txt
+
+      - name: Save reference outputs
+        # The output files already committed in the repo are the reference.
+        # Copy them now, before running the script, so we can compare afterward.
+        run: cp -r src/DynDom1D_Python/output/4ake_A_2eck_B reference_output
+
+      - name: Run the example
+        # main.py reads data/command.txt (pre-configured for the 4ake chain A /
+        # 2eck chain B adenylate kinase example) and writes results to
+        # output/4ake_A_2eck_B/.  The script uses relative paths throughout, so
+        # it must be launched from the src/DynDom1D_Python/ directory.
+        working-directory: src/DynDom1D_Python
+        run: python main.py
+
+      - name: Compare outputs to reference
+        # diff -r exits with code 1 if any files differ, failing this step.
+        # clustering_logs/ is excluded because it contains timestamped log files
+        # that are intentionally different on every run.
+        #
+        # If this step fails, the code is producing different output than the
+        # committed reference.  To update the reference, run the example locally
+        # (from src/DynDom1D_Python/) and commit the updated files in
+        # src/DynDom1D_Python/output/4ake_A_2eck_B/.
+        run: |
+          diff -r \
+            --exclude="clustering_logs" \
+            src/DynDom1D_Python/output/4ake_A_2eck_B \
+            reference_output

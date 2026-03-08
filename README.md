@@ -32,13 +32,14 @@ The analysis reveals:
 
 - Python 3.7 or higher
 - Required packages listed in `requirements.txt`
+- (Optional) PyMol (paid or open source). Some installation options are [here](https://pymolwiki.org/index.php/Linux_Install). `python -m pip install pymol-open-source` sometimes also works, or for conda/mamba users `mamba install -c conda-forge open-source-pymol` works more reliably. 
 
 ### Setup
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/DynDom1D_Python.git
-   cd DynDom1D_Python
+   git clone https://github.com/steven-hayward/DynDom1D_Python.git
+   cd DynDom1D_Python/src/DynDom1D_Python
    ```
 
 2. **Create a virtual environment** (recommended):

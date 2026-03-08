@@ -2,7 +2,7 @@
 # Domain-colored structure with hierarchical screw axis arrows
 reinitialize
 load 4ake_A_2eck_B.pdb
-bg_color white
+bg_color grey
 color grey
 
 # === HIERARCHICAL DOMAIN STRUCTURE COLORING ===
@@ -44,7 +44,7 @@ hide everything, 4ake_A_2eck_B_arrows
 
 # Arrow 1: Domain 0 (moving) relative to Domain 2 (reference)
 # Shaft color: blue (reference domain), Head color: red (moving domain)
-# Rotation: 53.0°
+# Rotation: 53.0Â°
 
 # Select shaft and head atoms by chain and residue
 select shaft_1, chain A and resn SHF and resi 100
@@ -66,7 +66,7 @@ bond head_1, head_1
 
 # Arrow 2: Domain 1 (moving) relative to Domain 2 (reference)
 # Shaft color: blue (reference domain), Head color: yellow (moving domain)
-# Rotation: 46.1°
+# Rotation: 46.1Â°
 
 # Select shaft and head atoms by chain and residue
 select shaft_2, chain B and resn SHF and resi 150
@@ -123,6 +123,6 @@ delete arrow_*
 print 'DynDom hierarchical visualization loaded!'
 print 'Global reference domain: 2 (blue)'
 print 'Analysis pair 1: Domain 0 (red) relative to Domain 2 (blue)'
-print '  Rotation: 53.0°'
+print '  Rotation: 53.0Â°'
 print 'Analysis pair 2: Domain 1 (yellow) relative to Domain 2 (blue)'
-print '  Rotation: 46.1°'
+print '  Rotation: 46.1Â°'
