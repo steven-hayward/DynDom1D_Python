@@ -78,10 +78,10 @@ The analysis reveals:
    ```
    input_path=data
    output_path=output
-   filename1=1hng
+   filename1=4ake
    chain1id=A
-   filename2=2hng
-   chain2id=A
+   filename2=2eck
+   chain2id=B
    ```
 
    **data/param.txt**:
