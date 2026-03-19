@@ -72,7 +72,7 @@ The analysis reveals:
 
 ### Basic Usage
 
-1. **Prepare input files** in the `data/` directory:
+1. **Prepare input files** edit the `command.txt` file in the `data/` directory:
 
    **data/command.txt**:
    ```
@@ -99,6 +99,7 @@ The analysis reveals:
    - Use PDB codes (e.g., `4ake`, `2eck`) and the software will automatically download them from RCSB
 
 3. **Run the analysis**:
+   - Run main.py from the `DynDom1D_Python/src/` directory 
    ```bash
    python main.py
    ```
@@ -194,7 +195,7 @@ DynDom1D_Python implements a 7-step automated workflow with hierarchical domain 
 
 3. **No domains found**:
    - Reduce `domain` parameter (try 15 or 10)
-   - Reduce `ratio` parameter (try 0.8 or 0.6)
+   - Reduce `ratio` parameter (try 0.8 or 0.6) - but be aware the results may not be meaningful for smaller values of the ratio (see paper by Hayward and Berendsen below).
    - Increase `window` parameter
 
 
