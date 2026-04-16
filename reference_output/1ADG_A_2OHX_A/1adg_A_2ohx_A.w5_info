@@ -1,0 +1,47 @@
+DynDom Python Version 1.0
+1adgA_2ohxA.w5
+file name of conformer 1: 1adg.pdb
+chain id: A
+file name of conformer 2: 2ohx.pdb
+chain id: A
+window length: 7
+minimum ratio of external to internal motion: 1.0
+minimum domain size: 20
+atoms to use: ['N', 'CA', 'C']
+THERE ARE 2 DOMAINS
+================================================================================
+FIXED DOMAIN - Fixed for pymol visualisation
+DOMAIN NUMBER: 	 1 (coloured blue for rasmol)
+RESIDUE NUMBERS: 	4 - 176, 290 - 290, 292 - 296, 319 - 371
+SIZE: 	232
+BACKBONE RMSD ON THIS DOMAIN: 	0.563A
+------------------------------------------------------------------------------
+MOVING DOMAIN (RELATIVE TO Domain 1)
+DOMAIN NUMBER: 	 2 (coloured yellow for rasmol)
+RESIDUE NUMBERS: 	177 - 289, 291 - 291, 297 - 318
+SIZE: 	136
+BACKBONE RMSD ON THIS DOMAIN: 	0.505A
+
+RATIO INTERDOMAIN TO INTRADOMAIN DISPLACEMENT: 	2.163
+ANGLE OF ROTATION: 	10.124 DEGREES
+TRANSLATION ALONG AXIS:	-0.278 A
+BENDING RESIDUES (coloured green for rasmol):
+
+BENDING RESIDUES: 	175 - 177
+BENDING RESIDUES: 	286 - 298
+BENDING RESIDUES: 	315 - 319
+
+GLY  175 ACTS AS A MECHANICAL HINGE, ITS C-ALPHA IS   4.4 A FROM AXIS
+PHE  176 ACTS AS A MECHANICAL HINGE, ITS C-ALPHA IS   0.7 A FROM AXIS
+SER  177 ACTS AS A MECHANICAL HINGE, ITS C-ALPHA IS   2.0 A FROM AXIS
+GLY  316 ACTS AS A MECHANICAL HINGE, ITS C-ALPHA IS   5.3 A FROM AXIS
+ALA  317 ACTS AS A MECHANICAL HINGE, ITS C-ALPHA IS   2.7 A FROM AXIS
+ILE  318 ACTS AS A MECHANICAL HINGE, ITS C-ALPHA IS   4.4 A FROM AXIS
+PHE  319 ACTS AS A MECHANICAL HINGE, ITS C-ALPHA IS   3.6 A FROM AXIS
+
+AXIS IS AN -- EFFECTIVE HINGE AXIS--
+
+ANGLE BETWEEN SCREW AXIS AND LINE JOINING CENTRES OF MASS:   76.4
+DISTANCE BETWEEN SCREW AXIS AND LINE JOINING CENTRES OF MASS:    4.7 A
+PERCENTAGE CLOSURE MOTION:   94.5
+------------------------------------------------------------------------------
