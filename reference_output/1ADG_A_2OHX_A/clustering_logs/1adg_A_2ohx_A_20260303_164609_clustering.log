@@ -1,0 +1,80 @@
+DynDom Clustering Log - 1adg_A_2ohx_A
+Started: 2026-03-03 16:46:09
+============================================================
+
+Window 5, K=2 - 16:46:09
+  Clusters: 2 (sizes: [np.int64(3), np.int64(367)])
+  Min cluster size: 3
+  FAIL: Cluster too small (< 20 residues)
+  Reason: Cluster too small, no previous valid solutions (fails=1)
+
+Window 5, K=3 - 16:46:09
+  Clusters: 3 (sizes: [np.int64(367), np.int64(2), np.int64(1)])
+  Min cluster size: 1
+  FAIL: Cluster too small (< 20 residues)
+  Reason: Cluster too small, no previous valid solutions (fails=2)
+
+Window 5, K=4 - 16:46:09
+  Clusters: 4 (sizes: [np.int64(367), np.int64(1), np.int64(1), np.int64(1)])
+  Min cluster size: 1
+  FAIL: Cluster too small (< 20 residues)
+  Reason: Cluster too small, no previous valid solutions (fails=3)
+
+Window 5, K=5 - 16:46:09
+  Clusters: 5 (sizes: [np.int64(1), np.int64(1), np.int64(1), np.int64(139), np.int64(228)])
+  Min cluster size: 1
+  FAIL: Cluster too small (< 20 residues)
+  Reason: Cluster too small, no previous valid solutions (fails=4)
+
+Window 5, K=6 - 16:46:09
+  Clusters: 6 (sizes: [np.int64(1), np.int64(1), np.int64(1), np.int64(226), np.int64(1), np.int64(140)])
+  Min cluster size: 1
+  FAIL: Cluster too small (< 20 residues)
+  Reason: Cluster too small, no previous valid solutions (fails=5)
+
+Window 5, K=7 - 16:46:09
+  Clusters: 7 (sizes: [np.int64(1), np.int64(1), np.int64(1), np.int64(1), np.int64(138), np.int64(15), np.int64(213)])
+  Min cluster size: 1
+  FAIL: Cluster too small (< 20 residues)
+  Reason: Cluster too small, no previous valid solutions (fails=6)
+
+WINDOW SIZE CHANGE: 5 -> 7
+  Reason: Too many consecutive failures (6)
+  Time: 16:46:09
+----------------------------------------
+
+============================================================
+FINAL RESULT
+Time: 2026-03-03 16:46:09
+Final K: None
+Final window: 5
+Status: -1
+Number of domains: 0
+============================================================
+WINDOW SIZE CHANGE: 5 -> 7
+  Reason: Clustering failed, trying larger window
+  Time: 16:46:09
+----------------------------------------
+
+Window 7, K=2 - 16:46:10
+  Clusters: 2 (sizes: [np.int64(233), np.int64(135)])
+  Min cluster size: 135
+  PASS: All checks passed
+  Domains: 2 (sizes: [np.int64(232), np.int64(136)])
+  Reason: Hierarchical analysis successful (domains: 2)
+
+Window 7, K=3 - 16:46:10
+  Clusters: 3 (sizes: [np.int64(134), np.int64(5), np.int64(229)])
+  Min cluster size: 5
+  FAIL: Cluster too small (< 20 residues)
+  Reason: Cluster too small but previous valid solution exists (k=2)
+
+============================================================
+FINAL RESULT
+Time: 2026-03-03 16:46:10
+Final K: 2
+Final window: 7
+Status: 0
+Number of domains: 2
+Domain sizes: [np.int64(232), np.int64(136)]
+============================================================
