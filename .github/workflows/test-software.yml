@@ -1,14 +1,12 @@
 name: Test Software
 
-# Run on every push and pull request to main/master, weekly to catch breakage
-# from upstream dependency updates, and allow manual triggering.
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
   schedule:
-    - cron: "0 6 * * 1"  # Every Monday at 06:00 UTC
+    - cron: "0 6 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -17,28 +15,27 @@ jobs:
     name: "${{ matrix.name }}"
 
     strategy:
-      # Run all matrix entries even if one fails, so you see the full picture.
       fail-fast: false
       matrix:
         include:
-          - name: "4ake_A / 2eck_B (adenylate kinase)"
-            command_file: data/4akeA_2eckB_command.txt
+          - name: "4ake_A / 2eck_B"
+            command_file: 4akeA_2eckB_command.txt
             output_dir: 4ake_A_2eck_B
 
-          - name: "1cts_A / 2cts_A (citrate synthase)"
-            command_file: data/1ctsA_2ctsA_command.txt
+          - name: "1cts_A / 2cts_A"
+            command_file: 1ctsA_2ctsA_command.txt
             output_dir: 1CTS_A_2CTS_A
 
-          - name: "1omp_A / 1anf_A (outer membrane / arabinose-binding)"
-            command_file: data/1ompA_1anfA_command.txt
+          - name: "1omp_A / 1anf_A"
+            command_file: 1ompA_1anfA_command.txt
             output_dir: 1OMP_A_1ANF_A
 
           - name: "1adg_A / 2ohx_A"
-            command_file: data/1adgA_2ohxA_command.txt
+            command_file: 1adgA_2ohxA_command.txt
             output_dir: 1ADG_A_2OHX_A
 
-          - name: "1cdl_A / 1cll_A (calmodulin)"
-            command_file: data/1cdllA_1cllA_command.txt
+          - name: "1cdl_A / 1cll_A"
+            command_file: 1cdllA_1cllA_command.txt
             output_dir: 1CDL_A_1CLL_A
 
     steps:
@@ -51,41 +48,20 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        # requirements.txt lives inside the package directory, not at the repo root.
         run: pip install -r src/DynDom1D_Python/requirements.txt
 
       - name: Save reference outputs
-        # The output files already committed in the repo are the reference.
-        # Copy them now, before running the script, so we can compare afterward.
-        run: |
-          cp -r \
-            src/DynDom1D_Python/output/${{ matrix.output_dir }} \
-            reference_output
+        run: cp -r src/DynDom1D_Python/output/${{ matrix.output_dir }} reference_output
 
       - name: Install command file for this test case
-        # Replace the default command.txt with the one for this matrix entry.
-        # The source command files are stored in data/ at the repo root; adjust
-        # the path below if you keep them elsewhere.
-        run: |
-          cp ${{ matrix.command_file }} \
-            src/DynDom1D_Python/data/command.txt
+        working-directory: src/DynDom1D_Python
+        run: cp data/${{ matrix.command_file }} data/command.txt
 
       - name: Run the example
-        # main.py reads data/command.txt and writes results to
-        # output/<pair>/.  The script uses relative paths throughout, so
-        # it must be launched from the src/DynDom1D_Python/ directory.
         working-directory: src/DynDom1D_Python
         run: python main.py
 
       - name: Compare outputs to reference
-        # diff -r exits with code 1 if any files differ, failing this step.
-        # clustering_logs/ is excluded because it contains timestamped log files
-        # that are intentionally different on every run.
-        #
-        # If this step fails, the code is producing different output than the
-        # committed reference.  To update the reference, run the example locally
-        # (from src/DynDom1D_Python/) and commit the updated files in
-        # src/DynDom1D_Python/output/${{ matrix.output_dir }}/.
         run: |
           diff -r \
             --exclude="clustering_logs" \
