@@ -17,7 +17,7 @@ authors:
     corresponding: true
     affiliation: 1
 affiliations:
- - name: School of Computing Sciences, University of East Anglia, Norwich NR4 7TJ, U.K.
+ - name: School of Computing Sciences, University of East Anglia, Norwich NR4 7TJ, United Kingdom.
    index: 1
 
 date: 1 August 2025
