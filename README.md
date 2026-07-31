@@ -208,6 +208,10 @@ S. Hayward, R. A. Lee
 "Improvements in the analysis of domain motions in proteins from conformational change: DynDom version 1.50" J Mol Graph Model, Dec, 21(3), 181-3, 2002. 
 ```
 
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report issues, suggest features, or submit a pull request.
+
 ## License
 
 BSD 3-Clause License 
